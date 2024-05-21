@@ -118,8 +118,10 @@ dim Timer11 as QTimer
 Timer11.enabled=0
 Timer11.Ontimer=OntimerSh
 
+ver$="v1.1"
+
 CREATE Form AS QFORM
-	Caption = "ReactOS boot flash wizard"
+	Caption = "ReactOS boot flash wizard "+ver$
 	top=60
 	Width = 520
 	Height = 740
