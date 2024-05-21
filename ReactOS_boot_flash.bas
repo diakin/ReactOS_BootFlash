@@ -5,7 +5,7 @@ $INCLUDE "QDrive2024.inc"
 '$INCLUDE "QDrive.inc"
 $include "Form.inc"
 
-$include "QProcess.inc"
+'$include "QProcess.inc"
 $include "QSHFileOperation.inc"
 
 '$RESOURCE rRufus AS "Rufus01.bmp"
@@ -108,6 +108,10 @@ Declare Sub ShowFileInfo
 
 dim DownGauge(10)  as QGauge
 dim DownLAbel(10)  as QLAbel
+
+
+chwidth=160
+
 Declare Sub OntimerSh
 
 dim Timer11 as QTimer
@@ -117,9 +121,9 @@ Timer11.Ontimer=OntimerSh
 CREATE Form AS QFORM
 	Caption = "ReactOS boot flash wizard"
 	top=60
-	Width = 350
-	Height = 700
-	left=1500
+	Width = 520
+	Height = 740
+	left=15
 	top=Screen.Height/2-420
 	ShowHint=1
 	color =4444444
@@ -286,7 +290,7 @@ CREATE Form AS QFORM
 		'Caption = "Panel1"
 		TabOrder = 8
 		align=altop 'albottom
-		height=320
+		height=380
 		color=clg 'clBtnFace
 		visible=0  
 		CREATE BtnDiowloadISO AS QButtonXP
@@ -312,39 +316,42 @@ CREATE Form AS QFORM
 			Left = 1
 			Top = 10
 			'Caption = "Panel1"
-			height=150
+			height=150+40
 			TabOrder = 8
 			'color=cly
 			
 			
 			CREATE CheckBox1 AS QCHECKBOX
-				Caption = "LiveCD x64 dbg"
+				Caption = "v.0.4.15 LiveCD x64 dbg"
 				Left = 10
 				Top = 20
-				width=100
+				width=chwidth
 				TabOrder = 8
 				checked=0
 				OnClick=CheckBoxOnClick
+				checked=0
 			END CREATE
 			
 			CREATE CheckBox2 AS QCHECKBOX
-				Caption = "LiveCD x86 dbg"
+				Caption = "v.0.4.15 LiveCD x86 dbg"
 				Left = 10
 				Top = CheckBox1.top+20*1
 				TabOrder = 8
+				width=chwidth
+				checked=0
 			END CREATE
 			
 			CREATE CheckBox3 AS QCHECKBOX
-				Caption = "LiveCD x86 release"
+				Caption = "v.0.4.15 LiveCD x86 release"
 				Left = 10
 				Top = CheckBox1.top+20*2
 				TabOrder = 8
-				width=110
+				width=chwidth
 				checked=1
 			END CREATE
 			
 			CREATE CheckBox4 AS QCHECKBOX
-				Caption = "BootCD x64 dbg" ' - to install on HDD!!! Be carefull!!!
+				Caption = "v.0.4.15 BootCD x64 dbg" ' - to install on HDD!!! Be carefull!!!
 				Left = 10
 				Top = CheckBox1.top+20*3
 				TabOrder = 8
@@ -352,21 +359,22 @@ CREATE Form AS QFORM
 				font.color=clr
 				font.Underline=1 'fsUnderline
 				checked=0
+				width=chwidth
 			END CREATE
 			
 			CREATE CheckBox5 AS QCHECKBOX
-				Caption = "BootCD x86 dbg"
+				Caption = "v.0.4.15 BootCD x86 dbg"
 				Left = 10
 				Top = CheckBox1.top+20*4
 				TabOrder = 8
 				font.Underline=1 'fsUnderline
 				font.color=clr
 				checked=0
-				'width=250
+				width=chwidth
 			END CREATE
 			
 			CREATE CheckBox6 AS QCHECKBOX
-				Caption = "BootCD x86 release"
+				Caption = "v.0.4.15 BootCD x86 release"
 				'width=250
 				Left = 10
 				Top = CheckBox1.top+20*5
@@ -374,9 +382,32 @@ CREATE Form AS QFORM
 				font.Underline=1 'fsUnderline
 				font.color=clr
 				checked=1
-				width=115
+				width=chwidth
 			END CREATE
 			
+			CREATE CheckBox7 AS QCHECKBOX
+				Caption = "v.0.4.14 LiveCD x86 release"
+				'width=250
+				Left = 10
+				Top = CheckBox1.top+20*6
+				TabOrder = 8
+				font.Underline=1 'fsUnderline
+				font.color=clr
+				checked=1
+				width=chwidth
+			END CREATE
+			
+			CREATE CheckBox8 AS QCHECKBOX
+				Caption = "v.0.4.14 BootCD x86 release"
+				'width=250
+				Left = 10
+				Top = CheckBox1.top+20*7
+				TabOrder = 8
+				font.Underline=1 'fsUnderline
+				font.color=clr
+				checked=1
+				width=chwidth
+			END CREATE
 			
 			' https://iso.reactos.org/bootcd/latest-x64-msvc-win-dbg
 			' https://iso.reactos.org/bootcd/latest-x86-gcc-lin-rel
@@ -390,10 +421,13 @@ CREATE Form AS QFORM
 			'https://iso.reactos.org/livecd/latest-x86-gcc-lin-dbg
 			'https://iso.reactos.org/livecd/latest-x86-gcc8.3-lin-dbg
 			
+			'https://wenda.rip/livecd0414.iso.7z
+			'https://wenda.rip/bootcd0414.iso.7z
+			
 			
 			CREATE DloadISOGBox AS QCanvas ' red border  
 				top=60
-				height=150
+				height=150+40
 				OnPaint=DloadISOGBoxRepaint
 				align=altop
 				visible=1
@@ -560,8 +594,6 @@ CREATE Form AS QFORM
 			Mask = "*.7z;*.iso"
 			'OnDblClick = ExecuteApplication
 			onclick=ShowFileInfo
-			top=111
-			Height = 152 'Form.ClientHeight
 			align=alclient 'altop'
 			'color=cls
 			MultiSelect=1
@@ -607,19 +639,20 @@ END CREATE
 
 flRuf=0
 
-for i=0 to 5
+for i=0 to 7
 	DownGauge(i).parent=PanelCheckBox 'PanelDownISO
 	DownGauge(i).top=20*i+CheckBox1.top+3
-	DownGauge(i).left=130
-	DownGauge(i).width=90
+	DownGauge(i).left=180
+	DownGauge(i).width=110
 	DownGauge(i).ForeColor=clb
 	DownGauge(i).Kind=gkHorizontalBar
 	DownGauge(i).height=15
 	
 	DownLAbel(i).parent=PanelCheckBox
 	DownLAbel(i).top=20*i+CheckBox1.top+3
-	DownLAbel(i).left=225
+	DownLAbel(i).left=315
 	DownLAbel(i).height=15
+	DownLAbel(i).caption=""
 	
 	
 next i
@@ -817,6 +850,33 @@ if CheckBox6.checked=1 then
 	
 end if
 
+if CheckBox7.checked=1 then 
+	
+	url$="https://wenda.rip/livecd0414.iso.7z"
+	
+	dFileName$=StartPath$+"ISO\reactos-livecd0414.iso.7z"
+	'call  AddClrString ("303:dFileName$="+(dFileName$), clred, LogEdit)
+	call DownLoadURL2 (url$, dFileName$, 6,44288512)
+	ISOList.Update
+	
+end if
+
+if CheckBox8.checked=1 then 
+	
+	url$="https://wenda.rip/bootcd0414.iso.7z"
+	
+	dFileName$=StartPath$+"ISO\reactos-bootcd0414.iso.7z"
+	'call  AddClrString ("303:dFileName$="+(dFileName$), clred, LogEdit)
+	call DownLoadURL2 (url$, dFileName$, 7,110288512)
+	ISOList.Update
+	
+end if
+
+'https://wenda.rip/livecd0414.iso.7z
+'https://wenda.rip/bootcd0414.iso.7z
+
+
+
 ISOList.Update
 
 '! unpack 7z files --------------------
@@ -1011,9 +1071,9 @@ for i618=0 to ISOList.ItemCount-1
 	end if
 next i618
 
-
-SHFile.Copy (StartPath$+"freeldr.sys",FlashDrive$+"\freeldr.sys")
-
+if fileexists(FlashDrive$+"freeldr.sys")=0 then
+	SHFile.Copy (StartPath$+"freeldr.sys",FlashDrive$+"\freeldr.sys")
+end if
 
 FlashFileList.update
 
@@ -1269,12 +1329,12 @@ kill FlashDrive$+"\"+"freeldr.ini"
 
 'FreeldrIniLstTxt$=FreeldrIniLst.Text
 
-'!FlashFileList.Mask = "*.iso"
+FlashFileList.Mask = "*.iso"
 
 OS$=FlashFileList.Item(0)
 
 DefaultOS$=OsName$(OS$)
-'call  AddClrString ("1032:DefaultOS$="+(DefaultOS$), clo, LogEdit)
+call  AddClrString ("1032:DefaultOS$="+(DefaultOS$), clo, LogEdit)
 
 FreeldrIniLst.Text=replacesubstr$(FreeldrIniLst.Text,"DefaultOS$",DefaultOS$)
 
@@ -1292,8 +1352,10 @@ FreeldrIniLst.AddItems "[Operating Systems]"
 for i=0 to FlashFileList.ItemCount-1
 	
 	OSNm$(i)=FlashFileList.Item(i)
-	os$=OSNm$(i)
-	OSNm$(i)=OsName$(os$)
+	if instr(OSNm$(i),"0.4.15")>0 then
+		os$=OSNm$(i)
+		OSNm$(i)=OsName$(os$)
+	end if
 	
 	FreeldrIniLst.AddItems OSNm$(i)+"="+qt+OSNm$(i)+qt
 	
@@ -1317,6 +1379,7 @@ next i
 
 FreeldrIniLst.SaveToFile FlashDrive$+"\"+"freeldr.ini"
 
+FlashFileList.Mask = "*.*"
 
 
 FlashFileList.update
